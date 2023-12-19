@@ -35,6 +35,12 @@ public class ClientHandler {
                         if (command.equals("/exit")) {
                             break;
                         }
+                        if (command.equals("/w")) {
+                            String receiver = array[1];
+                            String msg = array[2];
+                            server.privateMessage(this, receiver, username + ": " + msg);
+                            continue;
+                        }
                     }
                     server.broadcastMessage(username + ": " + message);
                 }
@@ -44,6 +50,14 @@ public class ClientHandler {
                 disconnect();
             }
         }).start();
+    }
+
+    public void sendMessage(String message) {
+        try {
+            out.writeUTF(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void disconnect() {
@@ -66,14 +80,6 @@ public class ClientHandler {
             if (socket != null) {
                 socket.close();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendMessage(String message) {
-        try {
-            out.writeUTF(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
