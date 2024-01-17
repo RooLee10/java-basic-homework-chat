@@ -89,7 +89,7 @@ public class ClientHandler {
             sendMessage("СЕРВЕР: Пользователь с таким логином уже существует");
             return false;
         }
-        server.getUserService().createNewUser(newUsername, newLogin, newPassword, UserRole.USER);
+        server.getUserService().createNewUser(newUsername, newLogin, newPassword);
         username = newUsername;
         server.subscribe(this);
         sendMessage("СЕРВЕР: Регистрация прошла успешно");
