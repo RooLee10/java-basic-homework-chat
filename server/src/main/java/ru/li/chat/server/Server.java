@@ -3,16 +3,16 @@ package ru.li.chat.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Server {
     private int port;
-    private List<ClientHandler> clients;
+    private Map<String, ClientHandler> clients;
 
     public Server(int port) {
         this.port = port;
-        this.clients = new ArrayList<>();
+        this.clients = new HashMap<>();
     }
 
     public void start() {
@@ -32,18 +32,28 @@ public class Server {
     }
 
     public synchronized void broadcastMessage(String message) {
-        for (ClientHandler clientHandler : clients) {
+        for (ClientHandler clientHandler : clients.values()) {
             clientHandler.sendMessage(message);
         }
     }
 
+    public synchronized void privateMessage(ClientHandler sender, String receiverUsername, String message) {
+        ClientHandler receiver = clients.get(receiverUsername);
+        if (receiver == null) {
+            sender.sendMessage("Не найден " + receiverUsername);
+            return;
+        }
+        sender.sendMessage(message);
+        receiver.sendMessage(message);
+    }
+
     public synchronized void subscribe(ClientHandler clientHandler) {
-        clients.add(clientHandler);
+        clients.put(clientHandler.getUsername(), clientHandler);
         System.out.println("Подключился новый клиент " + clientHandler.getUsername());
     }
 
     public synchronized void unsubscribe(ClientHandler clientHandler) {
-        clients.remove(clientHandler);
+        clients.remove(clientHandler.getUsername());
         System.out.println("Отключился клиент " + clientHandler.getUsername());
     }
 }
