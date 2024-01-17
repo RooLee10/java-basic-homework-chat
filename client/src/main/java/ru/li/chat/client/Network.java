@@ -19,7 +19,7 @@ public class Network implements AutoCloseable{
         this.socket = new Socket("localhost", port);
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
-        Thread messageRadingThread = new Thread(() -> {
+        Thread messageReadingThread = new Thread(() -> {
             try {
                 while (true) {
                     String message = in.readUTF();
@@ -33,8 +33,8 @@ public class Network implements AutoCloseable{
                 close();
             }
         });
-        messageRadingThread.setDaemon(true);
-        messageRadingThread.start();
+        messageReadingThread.setDaemon(true);
+        messageReadingThread.start();
     }
 
     public void sendMessage(String message) throws IOException {
