@@ -69,4 +69,11 @@ public class Server {
     public synchronized boolean isUserBusy(String username) {
         return clients.containsKey(username);
     }
+
+    public synchronized void kickByUsername(String username) {
+        ClientHandler clientHandler = clients.getOrDefault(username, null);
+        if (clientHandler != null) {
+            clientHandler.disconnect();
+        }
+    }
 }
