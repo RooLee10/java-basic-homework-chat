@@ -38,14 +38,13 @@ public class ClientHandler {
         while (true) {
             String message = in.readUTF();
             if (message.startsWith("/")) {
-                String[] array = message.split(" ", 3);
-                String command = array[0];
-                if (command.equals("/exit")) {
+                if (message.equals("/exit")) {
                     break;
                 }
-                if (command.equals("/w")) {
-                    String receiver = array[1];
-                    String msg = array[2];
+                if (message.startsWith("/w ")) {
+                    String[] elements = message.split(" ", 3);
+                    String receiver = elements[1];
+                    String msg = elements[2];
                     server.privateMessage(this, receiver, username + " -> " + receiver + ": " + msg);
                     continue;
                 }
