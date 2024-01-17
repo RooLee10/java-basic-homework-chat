@@ -9,6 +9,11 @@ import java.util.Map;
 public class Server {
     private int port;
     private Map<String, ClientHandler> clients;
+    private UserService userService;
+
+    public UserService getUserService() {
+        return userService;
+    }
 
     public Server(int port) {
         this.port = port;
@@ -18,10 +23,12 @@ public class Server {
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Сервер запущен на порту: " + port);
+            userService = new InMemoryUserService();
+            System.out.println("Запущен сервис для работы с пользователями");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 try {
-                    subscribe(new ClientHandler(this, clientSocket));
+                    new ClientHandler(this, clientSocket);
                 } catch (IOException e) {
                     System.out.println("Не удалось подключить клиента");
                 }
@@ -40,7 +47,7 @@ public class Server {
     public synchronized void privateMessage(ClientHandler sender, String receiverUsername, String message) {
         ClientHandler receiver = clients.get(receiverUsername);
         if (receiver == null) {
-            sender.sendMessage("Не найден " + receiverUsername);
+            sender.sendMessage("Не найден пользователь " + receiverUsername);
             return;
         }
         sender.sendMessage(message);
@@ -48,12 +55,18 @@ public class Server {
     }
 
     public synchronized void subscribe(ClientHandler clientHandler) {
+        System.out.println("К чату подключился пользователь " + clientHandler.getUsername());
+        broadcastMessage("К чату подключился пользователь " + clientHandler.getUsername());
         clients.put(clientHandler.getUsername(), clientHandler);
-        System.out.println("Подключился новый клиент " + clientHandler.getUsername());
     }
 
     public synchronized void unsubscribe(ClientHandler clientHandler) {
         clients.remove(clientHandler.getUsername());
-        System.out.println("Отключился клиент " + clientHandler.getUsername());
+        System.out.println("Пользователь " + clientHandler.getUsername() + " покинул чат");
+        broadcastMessage("Пользователь " + clientHandler.getUsername() + " покинул чат");
+    }
+
+    public synchronized boolean isUserBusy(String username) {
+        return clients.containsKey(username);
     }
 }
