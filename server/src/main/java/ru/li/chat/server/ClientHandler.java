@@ -42,10 +42,20 @@ public class ClientHandler {
                     break;
                 }
                 if (message.startsWith("/w ")) {
-                    String[] elements = message.split(" ", 3);
+                    String[] elements = message.split(" "); // /w username message
                     String receiver = elements[1];
                     String msg = elements[2];
                     server.privateMessage(this, receiver, username + " -> " + receiver + ": " + msg);
+                    continue;
+                }
+                if (message.startsWith("/kick ")) {
+                    if (!server.getUserService().isUserAdmin(username)) {
+                        sendMessage("СЕРВЕР: У вас недостаточно прав");
+                        continue;
+                    }
+                    String[] elements = message.split(" "); // /kick username
+                    String usernameToKick = elements[1];
+                    server.kickByUsername(usernameToKick);
                     continue;
                 }
             }
@@ -89,7 +99,7 @@ public class ClientHandler {
             sendMessage("СЕРВЕР: Пользователь с таким логином уже существует");
             return false;
         }
-        server.getUserService().createNewUser(newUsername, newLogin, newPassword);
+        server.getUserService().createNewUser(newUsername, newLogin, newPassword, UserRole.USER);
         username = newUsername;
         server.subscribe(this);
         sendMessage("СЕРВЕР: Регистрация прошла успешно");
@@ -128,7 +138,7 @@ public class ClientHandler {
         }
     }
 
-    private void disconnect() {
+    public void disconnect() {
         server.unsubscribe(this);
         try {
             if (in != null) {
