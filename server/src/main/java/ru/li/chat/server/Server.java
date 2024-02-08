@@ -23,7 +23,7 @@ public class Server {
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Сервер запущен на порту: " + port);
-            userService = new InMemoryUserService();
+            userService = new InDataBaseUserService();
             System.out.println("Запущен сервис для работы с пользователями");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
