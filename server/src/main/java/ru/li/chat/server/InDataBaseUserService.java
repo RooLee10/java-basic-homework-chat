@@ -3,7 +3,7 @@ package ru.li.chat.server;
 import java.sql.*;
 import java.util.*;
 
-public class InDataBaseUserService implements UserService{
+public class InDataBaseUserService implements UserService {
     class User {
         private int userId;
         private String userName;
@@ -156,7 +156,7 @@ public class InDataBaseUserService implements UserService{
                 } catch (SQLException e) {
                     throw new SQLException(e);
                 }
-            }catch (SQLException e) {
+            } catch (SQLException e) {
                 throw new SQLException(e);
             }
         } catch (SQLException e) {
