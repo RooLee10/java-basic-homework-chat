@@ -133,6 +133,10 @@ public class InDataBaseUserService implements UserService {
                 preparedStatement.setInt(1, idInfo.get("userId"));
                 preparedStatement.setInt(2, idInfo.get("roleId"));
                 preparedStatement.executeUpdate();
+                // Создание пользователя
+                Set<UserRole> roles = new HashSet<>();
+                roles.add(role);
+                this.users.add(new User(idInfo.get("userId"), username, login, password, roles));
             } catch (SQLException | RuntimeException e) {
                 throw new SQLException(e);
             }
