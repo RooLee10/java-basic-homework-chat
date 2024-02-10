@@ -115,6 +115,7 @@ public class InDataBaseUserService implements UserService {
     @Override
     public void createNewUser(String username, String login, String password, UserRole role) {
         try (Connection connection = DriverManager.getConnection(DATABASE_URL, LOGIN, PASSWORD)) {
+            connection.setAutoCommit(false);
             String sqlQuery = "INSERT INTO users (user_name, login, password) values (?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
                 // Запись в таблице Users
@@ -140,6 +141,7 @@ public class InDataBaseUserService implements UserService {
             } catch (SQLException | RuntimeException e) {
                 throw new SQLException(e);
             }
+            connection.setAutoCommit(true);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
