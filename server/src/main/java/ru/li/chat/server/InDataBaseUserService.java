@@ -25,10 +25,10 @@ public class InDataBaseUserService implements UserService {
 
     public InDataBaseUserService() {
         this.users = new ArrayList<>();
-        fillLisOfUsers();
+        fillUsers();
     }
 
-    private void fillLisOfUsers() {
+    private void fillUsers() {
         try (Connection connection = DriverManager.getConnection(DATABASE_URL, LOGIN, PASSWORD)) {
             getUsersFromDataBase(connection);
         } catch (SQLException e) {
