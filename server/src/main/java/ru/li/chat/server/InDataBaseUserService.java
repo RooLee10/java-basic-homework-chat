@@ -25,7 +25,10 @@ public class InDataBaseUserService implements UserService {
 
     public InDataBaseUserService() {
         this.users = new ArrayList<>();
+        fillLisOfUsers();
+    }
 
+    private void fillLisOfUsers() {
         try (Connection connection = DriverManager.getConnection(DATABASE_URL, LOGIN, PASSWORD)) {
             getUsersFromDataBase(connection);
         } catch (SQLException e) {
@@ -34,7 +37,7 @@ public class InDataBaseUserService implements UserService {
     }
 
     private void getUsersFromDataBase(Connection connection) throws SQLException {
-        String sqlQuery = "SELECT u.user_id, u.user_name, u.login, u.password, r.role_name FROM usertorole utr JOIN users u ON utr.user_id = u.user_id JOIN roles r ON utr.role_id = r.role_id";
+        String sqlQuery = "SELECT u.user_id, u.user_name, u.login, u.password, r.role_name FROM UserToRole utr JOIN Users u ON utr.user_id = u.user_id JOIN Roles r ON utr.role_id = r.role_id";
         try (Statement statement = connection.createStatement()) {
             try (ResultSet resultSet = statement.executeQuery(sqlQuery)) {
                 Map<Integer, Map<String, String>> idToUsersData = new HashMap<>();
@@ -140,7 +143,7 @@ public class InDataBaseUserService implements UserService {
     }
 
     private static void insertIntoUsers(String username, String login, String password, Connection connection) throws SQLException {
-        String sqlQuery = "INSERT INTO users (user_name, login, password) values (?, ?, ?)";
+        String sqlQuery = "INSERT INTO Users (user_name, login, password) values (?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, login);
@@ -152,7 +155,7 @@ public class InDataBaseUserService implements UserService {
     }
 
     private Map<String, Integer> getUserIdAndRoleIdByLoginAndRoleName(String login, String roleName, Connection connection) throws SQLException {
-        String sqlQuery = "select u.user_id, r.role_id from users u join roles r on u.login = ? and r.role_name = ?";
+        String sqlQuery = "SELECT u.user_id, r.role_id FROM Users u join Roles r on u.login = ? and r.role_name = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
             preparedStatement.setString(1, login);
             preparedStatement.setString(2, roleName);
